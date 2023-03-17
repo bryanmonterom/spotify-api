@@ -21,6 +21,11 @@ namespace spotify_api.Services
                 string baseURL = $"https://api.spotify.com/v1/artists/{id}";
                 var token = await GetToken();
 
+                if (token is  null) {
+
+                    return null;
+                }
+
                 using (var request = new HttpRequestMessage()) { 
                     request.Method = HttpMethod.Get;
                     request.RequestUri= new Uri(baseURL);
@@ -51,33 +56,34 @@ namespace spotify_api.Services
 
         }
 
-        public async Task<IEnumerable<Album>> GetArtistAlbums(string artistId)
+        //public async Task<IEnumerable<Album>> GetArtistAlbums(string id)
+        public async Task<Album> GetArtistAlbums(string id)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<AuthenticationResponse> GetToken()
-        {
-            var authenticationBody = new AuthenticationBody(configuration);
-
             using (var client = new HttpClient())
             {
-                string baseURL = "https://accounts.spotify.com/api/token";
-              
+                string baseURL = $"https://api.spotify.com/v1/artists/{id}/albums";
+                var token = await GetToken();
 
-                using (var content = new FormUrlEncodedContent(authenticationBody.Body())) {
+                if (token is null)
+                {
 
-                    content.Headers.Clear();
-                    content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                    return null;
+                }
 
-                    var response = client.PostAsync(baseURL, content).Result;
+                using (var request = new HttpRequestMessage())
+                {
+                    request.Method = HttpMethod.Get;
+                    request.RequestUri = new Uri(baseURL);
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Access_Token);
+
+                    var response = client.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
 
                         var result = await response.Content.ReadAsStringAsync();
                         if (!string.IsNullOrEmpty(result))
                         {
-                            var objDeserializeObject = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
+                            var objDeserializeObject = JsonConvert.DeserializeObject<Album>(result);
                             if (objDeserializeObject != null)
                             {
                                 return objDeserializeObject;
@@ -85,12 +91,54 @@ namespace spotify_api.Services
                         }
 
                     }
-                }
 
+                }
+                //Hay que corregir esto
                 return null;
-               
+
 
             }
+        }
+
+        public async Task<AuthenticationResponse> GetToken()
+        {
+            var authenticationBody = new AuthenticationBody(configuration);
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string baseURL = "https://accounts.spotify.com/api/token";
+
+                    using (var content = new FormUrlEncodedContent(authenticationBody.Body()))
+                    {
+                        content.Headers.Clear();
+                        content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+                        var response = client.PostAsync(baseURL, content).Result;
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var result = await response.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(result))
+                            {
+                                var objDeserializeObject = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
+                                if (objDeserializeObject != null)
+                                {
+                                    return objDeserializeObject;
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
+           
         }
     }
 }

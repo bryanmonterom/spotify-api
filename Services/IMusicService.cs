@@ -7,6 +7,6 @@ namespace spotify_api.Services
     {
         public Task<AuthenticationResponse> GetToken();
         public Task<Artist> GetArtist(string id);
-        public Task<IEnumerable<Album>> GetArtistAlbums(string artistId);
+        public Task<Album> GetArtistAlbums(string artistId);
     }
 }
