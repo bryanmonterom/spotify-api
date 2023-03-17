@@ -21,7 +21,7 @@ namespace spotify_api.Controllers
         public async Task<ActionResult> Get(string id= "2Hkut4rAAyrQxRdof7FVJq")
         {
 
-            artist = await spotifyService.GetArtist(id);
+            var artist = await spotifyService.GetArtist(id);
             if (artist is null) {
 
                 return BadRequest();

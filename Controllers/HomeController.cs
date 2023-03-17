@@ -19,6 +19,7 @@ namespace spotify_api.Controllers
                 using (var response = await httpClient.GetAsync($"https://localhost:7242/GetArtist/{id}")) { 
                 
                     string result = await response.Content.ReadAsStringAsync();
+
                     artist = JsonConvert.DeserializeObject<Artist>(result); 
                 } ;
             

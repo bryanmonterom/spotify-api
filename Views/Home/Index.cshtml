@@ -1,6 +1,24 @@
-﻿    @model  Artist;
+﻿@model Artist;
 @{
     ViewData["Title"] = "Tasks";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>@Model.Name</h1>
+
+<div class="container text-center">
+    <h1>@Model.Name</h1>
+    @*<img src="@Model.Images[0].URL" />*@
+
+    @foreach (var item in Model.Genres)
+    {
+        <span class="badge text-bg-primary">@item.Length</span>
+    }
+    <span class="badge text-bg-primary">ladasddasdasdask</span>
+
+    <div class="row">
+        <div class="col">
+            <partial name="_AlbumList" model="@Model.Albums.Items"></partial>
+        </div>
+    </div>
+</div>
+
+  

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 using spotify_api.DTO;
 using spotify_api.Entities;
 using System.Net.Mime;
@@ -41,7 +42,9 @@ namespace spotify_api.Services
                             var artist = JsonConvert.DeserializeObject<Artist>(result);
                             if (artist != null)
                             {
-                                artist.Albums = await GetArtistAlbums(id);
+                                var albums = await GetArtistAlbums(id);
+                                artist.Albums = albums;
+                                //artist.Albums.Items = albums.Items.OrderBy(a=> a.Release_Date).ToArray();
                                 return artist;
                             }
                         }
@@ -62,19 +65,25 @@ namespace spotify_api.Services
         {
             using (var client = new HttpClient())
             {
+                var query = new Dictionary<string, string>() {
+
+                    ["market"]="US"
+                };
+
                 string baseURL = $"https://api.spotify.com/v1/artists/{id}/albums";
+                var uri = QueryHelpers.AddQueryString(baseURL, query);
+
                 var token = await GetToken();
 
                 if (token is null)
                 {
-
                     return null;
                 }
 
                 using (var request = new HttpRequestMessage())
                 {
                     request.Method = HttpMethod.Get;
-                    request.RequestUri = new Uri(baseURL);
+                    request.RequestUri = new Uri(uri);
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Access_Token);
 
                     var response = client.SendAsync(request).Result;
@@ -84,10 +93,14 @@ namespace spotify_api.Services
                         var result = await response.Content.ReadAsStringAsync();
                         if (!string.IsNullOrEmpty(result))
                         {
-                            var objDeserializeObject = JsonConvert.DeserializeObject<Album>(result);
-                            if (objDeserializeObject != null)
+                            var albums = JsonConvert.DeserializeObject<Album>(result);
+                            if (albums != null)
                             {
-                                return objDeserializeObject;
+                                foreach (var item in albums.Items)
+                                {
+                                    item.SetReleaseDate();
+                                }
+                                return albums;
                             }
                         }
 

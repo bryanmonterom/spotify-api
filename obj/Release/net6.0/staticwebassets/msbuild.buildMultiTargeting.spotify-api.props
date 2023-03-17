@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\spotify-api.props" />
+</Project>
