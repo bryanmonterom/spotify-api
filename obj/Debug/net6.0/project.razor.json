@@ -18374,6 +18374,11 @@
   "RootNamespace": "spotify_api",
   "Documents": [
     {
+      "FilePath": "c:\\Users\\miste\\Desktop\\projects\\spotify-api\\spotify-api\\Views\\Shared\\NotFound.cshtml",
+      "TargetPath": "Views\\Shared\\NotFound.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\miste\\Desktop\\projects\\spotify-api\\spotify-api\\Views\\_ViewImports.cshtml",
       "TargetPath": "Views\\_ViewImports.cshtml",
       "FileKind": "mvc"

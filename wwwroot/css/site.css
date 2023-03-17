@@ -16,3 +16,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.shadow {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.section {
+border: 1px solid lightgray;
+padding:10px;
+margin:10px;
+border-radius:5px;
+}

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using spotify_api.DTO;
 using spotify_api.Entities;
+using spotify_api.Helper;
 using System.Net.Mime;
 using System.Text;
 
@@ -10,6 +11,13 @@ namespace spotify_api.Services
     public class SpotifyService : IMusicService
     {
         private readonly IConfiguration configuration;
+        Singleton singleton = new Singleton();
+
+
+
+        public SpotifyService()
+        {
+        }
 
         public SpotifyService(IConfiguration configuration)
         {
@@ -20,17 +28,22 @@ namespace spotify_api.Services
             using (var client = new HttpClient())
             {
                 string baseURL = $"https://api.spotify.com/v1/artists/{id}";
-                var token = await GetToken();
 
-                if (token is  null) {
+                await GetToken();
+                var token = singleton.token;
 
+
+                //If null return badrequest en el controller
+                if (token is null)
+                {
                     return null;
                 }
 
-                using (var request = new HttpRequestMessage()) { 
+                using (var request = new HttpRequestMessage())
+                {
                     request.Method = HttpMethod.Get;
-                    request.RequestUri= new Uri(baseURL);
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer",token.Access_Token);
+                    request.RequestUri = new Uri(baseURL);
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                     var response = client.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -43,8 +56,11 @@ namespace spotify_api.Services
                             if (artist != null)
                             {
                                 var albums = await GetArtistAlbums(id);
+                                if (albums is null) {
+
+                                    return null;
+                                }
                                 artist.Albums = albums;
-                                //artist.Albums.Items = albums.Items.OrderBy(a=> a.Release_Date).ToArray();
                                 return artist;
                             }
                         }
@@ -52,7 +68,6 @@ namespace spotify_api.Services
                     }
 
                 }
-                //Hay que corregir esto
                 return null;
 
 
@@ -60,20 +75,21 @@ namespace spotify_api.Services
 
         }
 
-        //public async Task<IEnumerable<Album>> GetArtistAlbums(string id)
         public async Task<Album> GetArtistAlbums(string id)
         {
             using (var client = new HttpClient())
             {
-                var query = new Dictionary<string, string>() {
+                var query = new Dictionary<string, string>()
+                {
 
-                    ["market"]="US"
+                    ["market"] = "US"
                 };
 
                 string baseURL = $"https://api.spotify.com/v1/artists/{id}/albums";
                 var uri = QueryHelpers.AddQueryString(baseURL, query);
 
-                var token = await GetToken();
+                var token = singleton.token;
+
 
                 if (token is null)
                 {
@@ -84,7 +100,7 @@ namespace spotify_api.Services
                 {
                     request.Method = HttpMethod.Get;
                     request.RequestUri = new Uri(uri);
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Access_Token);
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                     var response = client.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -107,14 +123,13 @@ namespace spotify_api.Services
                     }
 
                 }
-                //Hay que corregir esto
                 return null;
 
 
             }
         }
 
-        public async Task<AuthenticationResponse> GetToken()
+        public async Task GetToken()
         {
             var authenticationBody = new AuthenticationBody(configuration);
 
@@ -135,24 +150,25 @@ namespace spotify_api.Services
                             var result = await response.Content.ReadAsStringAsync();
                             if (!string.IsNullOrEmpty(result))
                             {
-                                var objDeserializeObject = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
-                                if (objDeserializeObject != null)
+                                var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
+                                if (authResponse != null)
                                 {
-                                    return objDeserializeObject;
+                                    singleton.token = authResponse.Access_Token;
+
+                                    //return authResponse.Access_Token;
                                 }
                             }
                         }
                     }
-                    return null;
+                    //return null;
                 }
             }
             catch (Exception e)
             {
-
                 throw;
             }
 
-           
+
         }
     }
 }

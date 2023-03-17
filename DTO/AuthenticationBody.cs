@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace spotify_api.DTO
+﻿namespace spotify_api.DTO
 {
     public class AuthenticationBody
     {
@@ -15,11 +13,12 @@ namespace spotify_api.DTO
         private string client_secret => configuration["ClientSecret"];
         private string grant_type => "client_credentials";
 
-        public KeyValuePair<string, string>[] Body() {
+        public KeyValuePair<string, string>[] Body()
+        {
 
             var Body = new KeyValuePair<string, string>[]
             {
-                      new KeyValuePair<string, string>("client_id", client_id),
+                     new KeyValuePair<string, string>("client_id", client_id),
                     new KeyValuePair<string, string>("client_secret", client_secret),
                     new KeyValuePair<string, string>("grant_type", grant_type),
             };
