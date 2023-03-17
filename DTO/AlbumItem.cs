@@ -8,7 +8,5 @@
         public Image[] Images { get; set; }
         public string Name { get; set; }
 
-
-
     }
 }

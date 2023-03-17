@@ -43,3 +43,8 @@ C:\Users\miste\Desktop\projects\spotify-api\spotify-api\bin\Debug\net6.0\Newtons
 C:\Users\miste\Desktop\projects\spotify-api\spotify-api\bin\Debug\net6.0\System.Text.Encodings.Web.dll
 C:\Users\miste\Desktop\projects\spotify-api\spotify-api\bin\Debug\net6.0\System.Text.Json.dll
 C:\Users\miste\Desktop\projects\spotify-api\spotify-api\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
+C:\Users\miste\Desktop\projects\spotify-api\spotify-api\obj\Debug\net6.0\spotify-api.RazorAssemblyInfo.cache
+C:\Users\miste\Desktop\projects\spotify-api\spotify-api\obj\Debug\net6.0\spotify-api.RazorAssemblyInfo.cs
+C:\Users\miste\Desktop\projects\spotify-api\spotify-api\bin\Debug\net6.0\spotify-api.staticwebassets.runtime.json
+C:\Users\miste\Desktop\projects\spotify-api\spotify-api\obj\Debug\net6.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\miste\Desktop\projects\spotify-api\spotify-api\obj\Debug\net6.0\scopedcss\projectbundle\spotify-api.bundle.scp.css
