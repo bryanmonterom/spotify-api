@@ -1,13 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using spotify_api.DTO;
-
-namespace spotify_api.Helper
+﻿namespace spotify_api.Helper
 {
     public sealed class Singleton
     {
         private static Singleton _instance;
-        private readonly IConfiguration configuration;
 
 
 
@@ -17,10 +12,10 @@ namespace spotify_api.Helper
         {
         }
 
-     
+
         public static Singleton GetInstance()
         {
-            if (_instance == null  )
+            if (_instance == null)
             {
                 _instance = new Singleton();
             }
