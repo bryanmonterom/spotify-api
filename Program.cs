@@ -1,11 +1,26 @@
+using spotify_api.Services;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//builder.Configuration
+//    .SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("secrets.json");
+
+//builder.Configuration.AddEnvironmentVariables()
+//                     .AddKeyVault()
+//                     .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//add interfaces
+builder.Services.AddTransient<IMusicService, SpotifyService>();
+
+
 
 var app = builder.Build();
 
