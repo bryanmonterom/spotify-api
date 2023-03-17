@@ -18389,6 +18389,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\miste\\Desktop\\projects\\spotify-api\\spotify-api\\Views\\Home\\_AlbumList.cshtml",
+      "TargetPath": "Views\\Home\\_AlbumList.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\miste\\Desktop\\projects\\spotify-api\\spotify-api\\Views\\_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
       "FileKind": "mvc"
