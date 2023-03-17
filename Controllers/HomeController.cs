@@ -14,31 +14,29 @@ namespace spotify_api.Controllers
         {
             var artist = new Artist();
 
-            using (var httpClient = new HttpClient()) {
+            using (var httpClient = new HttpClient())
+            {
 
                 using (var response = await httpClient.GetAsync($"https://localhost:7242/GetArtist/{id}"))
                 {
                     {
-
-
                         string result = await response.Content.ReadAsStringAsync();
+                        artist = JsonConvert.DeserializeObject<Artist>(result);
+                        if (artist.Name is null)
+                        {
+                            return RedirectToAction("NotFound");
+                        }
+                    };
 
-                    artist = JsonConvert.DeserializeObject<Artist>(result);
 
-                    if (artist.Name is null) { 
-                    
-                        return RedirectToAction("NotFound");
-                    }
-                } ;
-            
-
-            }
+                }
                 return View(artist);
+            }
         }
 
-        public ActionResult NotFound() { 
-        
-            return View();
+            public ActionResult NotFound() {
+
+                return View();
+            }
         }
     }
-}

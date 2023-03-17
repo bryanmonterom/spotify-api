@@ -4,13 +4,7 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Configuration
-//    .SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("secrets.json");
 
-//builder.Configuration.AddEnvironmentVariables()
-//                     .AddKeyVault()
-//                     .AddUserSecrets(Assembly.GetExecutingAssembly(), true);
 
 
 builder.Services.AddControllers();
