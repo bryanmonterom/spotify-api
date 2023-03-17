@@ -8,6 +8,6 @@ namespace spotify_api.Entities
         public string Name { get; set; }
         public Image[] Images { get; set; }
         public List<string> Genres { get; set; }
-        public List<Album> Albums { get; set; }
+        public Album Albums { get; set; }
     }
 }

@@ -11,18 +11,16 @@ namespace spotify_api.Controllers
     public class ArtistController : ControllerBase
     {
         private readonly IMusicService spotifyService;
-        private readonly IConfiguration configuration;
 
-        public ArtistController(IMusicService spotifyService, IConfiguration configuration)
+        public ArtistController(IMusicService spotifyService)
         {
             this.spotifyService = spotifyService;
-            this.configuration = configuration;
         }
 
         [HttpGet("/GetArtist/{id}")]
         public async Task<ActionResult> Get(string id= "2Hkut4rAAyrQxRdof7FVJq")
         {
-            var artist = new Artist();
+
             artist = await spotifyService.GetArtist(id);
             if (artist is null) {
 
@@ -31,16 +29,16 @@ namespace spotify_api.Controllers
             return Ok(artist);
         }
 
-        [HttpGet("/GetAlbums/{id}")]
-        public async Task<ActionResult> GetAlbums(string id= "2Hkut4rAAyrQxRdof7FVJq")
-        {
-           var album = await spotifyService.GetArtistAlbums(id);
-            if (album is null)
-            {
-                return BadRequest();
-            }
-            return Ok(album);
-        }
+        //[HttpGet("/GetAlbums/{id}")]
+        //public async Task<ActionResult> GetAlbums(string id= "2Hkut4rAAyrQxRdof7FVJq")
+        //{
+        //   var album = await spotifyService.GetArtistAlbums(id);
+        //    if (album is null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    return Ok(album);
+        //}
 
     }
 }

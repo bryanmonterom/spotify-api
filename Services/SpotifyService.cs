@@ -38,10 +38,11 @@ namespace spotify_api.Services
                         var result = await response.Content.ReadAsStringAsync();
                         if (!string.IsNullOrEmpty(result))
                         {
-                            var objDeserializeObject = JsonConvert.DeserializeObject<Artist>(result);
-                            if (objDeserializeObject != null)
+                            var artist = JsonConvert.DeserializeObject<Artist>(result);
+                            if (artist != null)
                             {
-                                return objDeserializeObject;
+                                artist.Albums = await GetArtistAlbums(id);
+                                return artist;
                             }
                         }
 
