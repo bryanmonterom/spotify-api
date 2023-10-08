@@ -13,7 +13,7 @@
         private string client_secret => configuration["ClientSecret"];
         private string grant_type => "client_credentials";
 
-        public KeyValuePair<string, string>[] Body()
+        public KeyValuePair<string, string>[] GetBody()
         {
 
             var Body = new KeyValuePair<string, string>[]

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using spotify_api.DTO;
 using spotify_api.Entities;
+using spotify_api.Factories.IFactories;
 using spotify_api.Helper;
 using System.Net.Http;
 using System.Net.Mime;
@@ -15,26 +16,29 @@ namespace spotify_api.Services
     {
         private readonly IConfiguration configuration;
         private readonly IHttpClientHelper httpClientHelper;
-        private readonly IHttpClientFactory httpClientFactory;
+        private readonly IFactories factories;
+
         Singleton singleton = new Singleton();
-        string BASEURL = "https://api.spotify.com/v1/artists/";
+        private readonly string BASEURL = "https://api.spotify.com/v1/artists/";
+        private readonly string tokenURL = "https://accounts.spotify.com/api/token";
 
         public SpotifyService()
         {
         }
 
-        public SpotifyService(IConfiguration configuration, IHttpClientHelper httpClientHelper, IHttpClientFactory httpClientFactory)
+        public SpotifyService(IConfiguration configuration, IHttpClientHelper httpClientHelper, IFactories factories )
         {
             this.configuration = configuration;
             this.httpClientHelper = httpClientHelper;
-            this.httpClientFactory = httpClientFactory;
+            this.factories = factories;
         }
+
         public async Task<Artist> GetArtist(string id)
         {
             await GetToken();
             var token = singleton.token;
 
-            var result = await httpClientHelper.SendAysnc(HttpMethod.Get, $"{BASEURL}{id}", token); ;
+            var result = await httpClientHelper.SendAysnc($"{BASEURL}{id}", token); ;
             if (!string.IsNullOrEmpty(result))
             {
                 var artist = JsonConvert.DeserializeObject<Artist>(result);
@@ -63,7 +67,7 @@ namespace spotify_api.Services
             string baseURL = $"{BASEURL}{id}/albums";
             var uri = QueryHelpers.AddQueryString(baseURL, query);
 
-            var result = await httpClientHelper.SendAysnc(HttpMethod.Get, uri, singleton.token); ;
+            var result = await httpClientHelper.SendAysnc( uri, singleton.token); ;
             if (!string.IsNullOrEmpty(result))
             {
                 var albums = JsonConvert.DeserializeObject<Album>(result);
@@ -77,38 +81,14 @@ namespace spotify_api.Services
 
         public async Task GetToken()
         {
-            var authenticationBody = new AuthenticationBody(configuration);
-
-            try
+            var result = await httpClientHelper.PostAsync( tokenURL, factories.GetAuthentication(configuration).GetBody()); ;
+            if (!string.IsNullOrEmpty(result))
             {
-                using (var client = new HttpClient())
+                var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
+                if (authResponse != null)
                 {
-                    string baseURL = "https://accounts.spotify.com/api/token";
-
-                    using (var content = new FormUrlEncodedContent(authenticationBody.Body()))
-                    {
-                        content.Headers.Clear();
-                        content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-
-                        var response = client.PostAsync(baseURL, content).Result;
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var result = await response.Content.ReadAsStringAsync();
-                            if (!string.IsNullOrEmpty(result))
-                            {
-                                var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
-                                if (authResponse != null)
-                                {
-                                    singleton.token = authResponse.Access_Token;
-                                }
-                            }
-                        }
-                    }
+                    singleton.token = authResponse.Access_Token;
                 }
-            }
-            catch (Exception e)
-            {
-                throw e;
             }
         }
     }

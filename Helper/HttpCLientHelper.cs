@@ -1,24 +1,56 @@
-﻿using System.Net.Http;
+﻿using Newtonsoft.Json;
+using spotify_api.DTO;
+using spotify_api.Factories.IFactories;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace spotify_api.Helper
 {
     public class HttpCLientHelper : IHttpClientHelper
     {
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IFactories factories;
+        private readonly string tokenType = "Bearer";
 
-        public HttpCLientHelper(IHttpClientFactory httpClientFactory)
+        public HttpCLientHelper(IHttpClientFactory httpClientFactory, IFactories factories)
         {
             this.httpClientFactory = httpClientFactory;
+            this.factories = factories;
         }
-        public async Task<string> SendAysnc(HttpMethod method, string uri, string token)
+
+        public async Task<string> PostAsync(string uri, IEnumerable<KeyValuePair<string, string>> content)
+        {
+            using (var client = new HttpClient())
+            {
+                using (var formContent = factories.GetFormUrlEncodedContent(content))
+                {
+                    formContent.Headers.Clear();
+                    formContent.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+                    var response = client.PostAsync(uri, formContent).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = await response.Content.ReadAsStringAsync();
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                         return result;
+                        }
+                    }
+                    return null;
+
+                }
+            }
+        }
+
+        public async Task<string> SendAysnc(string uri, string token)
         {
             using (var client = httpClientFactory.CreateClient())
             {
                 using (var request = new HttpRequestMessage())
                 {
-                    request.Method = method;
+                    request.Method = HttpMethod.Get;
                     request.RequestUri = new Uri(uri);
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenType, token);
 
                     var response = client.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
