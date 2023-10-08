@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using spotify_api.DTO;
 using spotify_api.Entities;
 using spotify_api.Factories.IFactories;
 using spotify_api.Helper;
-using System.Net.Http;
-using System.Net.Mime;
-using System.Text;
-using static System.Net.WebRequestMethods;
 
 namespace spotify_api.Services
 {
@@ -17,8 +12,7 @@ namespace spotify_api.Services
         private readonly IConfiguration configuration;
         private readonly IHttpClientHelper httpClientHelper;
         private readonly IFactories factories;
-
-        Singleton singleton = new Singleton();
+        private readonly ISingleton singleton;
         private readonly string BASEURL = "https://api.spotify.com/v1/artists/";
         private readonly string tokenURL = "https://accounts.spotify.com/api/token";
 
@@ -26,19 +20,18 @@ namespace spotify_api.Services
         {
         }
 
-        public SpotifyService(IConfiguration configuration, IHttpClientHelper httpClientHelper, IFactories factories )
+        public SpotifyService(IConfiguration configuration, IHttpClientHelper httpClientHelper, IFactories factories, ISingleton singleton )
         {
             this.configuration = configuration;
             this.httpClientHelper = httpClientHelper;
             this.factories = factories;
+            this.singleton = singleton;
         }
 
         public async Task<Artist> GetArtist(string id)
         {
             await GetToken();
-            var token = singleton.token;
-
-            var result = await httpClientHelper.SendAysnc($"{BASEURL}{id}", token); ;
+            var result = await httpClientHelper.SendAysnc($"{BASEURL}{id}", singleton.GetToken()); ;
             if (!string.IsNullOrEmpty(result))
             {
                 var artist = JsonConvert.DeserializeObject<Artist>(result);
@@ -59,15 +52,7 @@ namespace spotify_api.Services
 
         public async Task<Album> GetArtistAlbums(string id)
         {
-            var query = new Dictionary<string, string>()
-            {
-                ["market"] = "US"
-            };
-
-            string baseURL = $"{BASEURL}{id}/albums";
-            var uri = QueryHelpers.AddQueryString(baseURL, query);
-
-            var result = await httpClientHelper.SendAysnc( uri, singleton.token); ;
+            var result = await httpClientHelper.SendAysnc(BuilAlbumsURI(id), singleton.GetToken()); ;
             if (!string.IsNullOrEmpty(result))
             {
                 var albums = JsonConvert.DeserializeObject<Album>(result);
@@ -79,6 +64,18 @@ namespace spotify_api.Services
             return null;
         }
 
+        private string BuilAlbumsURI(string id)
+        {
+            var query = new Dictionary<string, string>()
+            {
+                ["market"] = "US"
+            };
+
+            string baseURL = $"{BASEURL}{id}/albums";
+            var uri = QueryHelpers.AddQueryString(baseURL, query);
+            return uri;
+        }
+
         public async Task GetToken()
         {
             var result = await httpClientHelper.PostAsync( tokenURL, factories.GetAuthentication(configuration).GetBody()); ;
@@ -87,7 +84,7 @@ namespace spotify_api.Services
                 var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(result);
                 if (authResponse != null)
                 {
-                    singleton.token = authResponse.Access_Token;
+                    singleton.SetToken(authResponse.Access_Token);
                 }
             }
         }

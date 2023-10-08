@@ -28,6 +28,7 @@ builder.Services.AddSwaggerGen();
 
 //add interfaces
 builder.Services.AddTransient<IFactories, spotify_api.Factories.Factories>();
+builder.Services.AddTransient<ISingleton, Singleton>();
 builder.Services.AddTransient<IMusicService, SpotifyService>();
 builder.Services.AddTransient<IHttpClientHelper, HttpCLientHelper>();
 

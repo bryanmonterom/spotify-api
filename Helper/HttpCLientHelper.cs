@@ -20,7 +20,7 @@ namespace spotify_api.Helper
 
         public async Task<string> PostAsync(string uri, IEnumerable<KeyValuePair<string, string>> content)
         {
-            using (var client = new HttpClient())
+            using (var client = httpClientFactory.CreateClient())
             {
                 using (var formContent = factories.GetFormUrlEncodedContent(content))
                 {
