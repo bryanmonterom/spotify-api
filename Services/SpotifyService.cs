@@ -76,7 +76,7 @@ namespace spotify_api.Services
             return uri;
         }
 
-        public async Task GetToken()
+        private async Task GetToken()
         {
             var result = await httpClientHelper.PostAsync( tokenURL, factories.GetAuthentication(configuration).GetBody()); ;
             if (!string.IsNullOrEmpty(result))
