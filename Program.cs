@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Authorization;
+using spotify_api.Factories.IFactories;
 using spotify_api.Helper;
 using spotify_api.Services;
 using System.Reflection;
@@ -26,6 +27,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //add interfaces
+builder.Services.AddTransient<IFactories, spotify_api.Factories.Factories>();
 builder.Services.AddTransient<IMusicService, SpotifyService>();
 builder.Services.AddTransient<IHttpClientHelper, HttpCLientHelper>();
 
