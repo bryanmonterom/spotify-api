@@ -1,19 +1,18 @@
 ﻿namespace spotify_api.Helper
 {
-    public sealed class Singleton
+    public sealed class Singleton :ISingleton
     {
         private static Singleton _instance;
 
 
-
-        public string token;
+        private string token;
 
         public Singleton()
         {
         }
 
 
-        public static Singleton GetInstance()
+        public Singleton GetInstance()
         {
             if (_instance == null)
             {
@@ -21,6 +20,17 @@
             }
             return _instance;
         }
+
+        public string GetToken()
+        {
+            return token;
+        }
+
+        public void SetToken(string token)
+        {
+            this.token = token;
+        }
+
 
     }
 }
