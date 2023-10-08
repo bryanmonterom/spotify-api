@@ -5,7 +5,6 @@ namespace spotify_api.Services
 {
     public interface IMusicService
     {
-        public Task GetToken();
         public Task<Artist> GetArtist(string id);
         public Task<Album> GetArtistAlbums(string artistId);
     }
