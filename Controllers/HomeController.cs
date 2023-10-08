@@ -23,20 +23,19 @@ namespace spotify_api.Controllers
                         string result = await response.Content.ReadAsStringAsync();
                         artist = JsonConvert.DeserializeObject<Artist>(result);
                         if (artist.Name is null)
-                        {
+
                             return RedirectToAction("NotFound");
-                        }
-                    };
+                    }
+                };
 
 
-                }
-                return View(artist);
             }
-        }
+            return View(artist);
+            }
 
             public ActionResult NotFound() {
 
                 return View();
             }
         }
-    }
+}

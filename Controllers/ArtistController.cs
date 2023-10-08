@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using spotify_api.Services;
 
 namespace spotify_api.Controllers
